@@ -356,7 +356,7 @@ function createBricks() {
     var row = Math.floor((i + 1) / _setup.STAGE_COLS);
     var col = i % _setup.STAGE_COLS;
     var x = _setup.STAGE_PADDING + col * (_setup.BRICK_WIDTH + _setup.BRICK_PADDING);
-    var y = _setup.STAGE_PADDING + row * (_setup.BRICK_WIDTH + _setup.BRICK_PADDING);
+    var y = _setup.STAGE_PADDING + row * (_setup.BRICK_HEIGHT + _setup.BRICK_PADDING);
     if (element === 0) return ack;
     return __spreadArrays(ack, [new _Brick.Brick(_setup.BRICK_WIDTH, _setup.BRICK_HEIGHT, {
       x: x,
@@ -434,7 +434,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55186" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55829" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,4 +1,4 @@
-import { Brick } from "./sprites/Brick";
+import { Brick } from './sprites/Brick';
 import {
   BRICK_IMAGES,
   LEVEL,
@@ -8,7 +8,7 @@ import {
   BRICK_HEIGHT,
   BRICK_PADDING,
   BRICK_ENERGY
-} from './setup'
+} from './setup';
 
 export function createBricks(): Brick[] {
   return LEVEL.reduce((ack, element, i) => {
@@ -16,7 +16,7 @@ export function createBricks(): Brick[] {
     const col = i % STAGE_COLS;
 
     const x = STAGE_PADDING + col * (BRICK_WIDTH + BRICK_PADDING);
-    const y = STAGE_PADDING + row * (BRICK_WIDTH + BRICK_PADDING);
+    const y = STAGE_PADDING + row * (BRICK_HEIGHT + BRICK_PADDING);
 
     if (element === 0) return ack;
 
@@ -27,8 +27,8 @@ export function createBricks(): Brick[] {
         BRICK_HEIGHT,
         { x, y },
         BRICK_ENERGY[element],
-        BRICK_IMAGES[element],
+        BRICK_IMAGES[element]
       )
-    ]
+    ];
   }, [] as Brick[]);
 }

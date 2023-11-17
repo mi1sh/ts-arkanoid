@@ -64,6 +64,13 @@ function gameLoop(
     view.drawScore(score);
   }
 
+  // "Game Over" когда мяч падает:
+  if (ball.pos.y > view.canvas.height) gameOver = true;
+  // "Game Won" когда игра пройдена:
+  if(bricks.length === 0) return setGameWin(view);
+  
+  if (gameOver) return setGameOver(view);
+
   requestAnimationFrame(() => gameLoop(view, bricks, paddle, ball, collision));
 }
 

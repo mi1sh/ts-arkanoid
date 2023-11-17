@@ -19,7 +19,7 @@ export class Ball {
     this.ballImage.src = image;
   }
 
-  // Getters
+  // Геттеры
   get width(): number {
     return this.ballSize;
   }
@@ -36,7 +36,7 @@ export class Ball {
     return this.ballImage;
   }
 
-  // Methods
+  // Методы
   changeYDirection(): void {
     this.speed.y = -this.speed.y;
   }

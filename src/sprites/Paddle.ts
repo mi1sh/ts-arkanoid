@@ -21,12 +21,12 @@ export class Paddle {
     this. moveRight = false;
     this.paddleImage.src = image;
 
-    // Event Listeners
+    // Обработка событий
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
   }
 
-  // Getters
+  // Геттеры
   get width(): number {
     return this.paddleWidth;
   }

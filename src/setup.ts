@@ -4,11 +4,10 @@ import GREEN_BRICK_IMAGE from './images/brick-green.png';
 import YELLOW_BRICK_IMAGE from './images/brick-yellow.png';
 import PURPLE_BRICK_IMAGE from './images/brick-purple.png';
 
-// Grab the canvas element for calculating the brick width
-// depending on canvas width
+// Элемент canvas, расчет ширины блока в зависимости от ширины холста canvas
 const canvas: HTMLCanvasElement | null = document.querySelector('#playField');
 
-// Constants
+// Константы
 export const STAGE_PADDING = 10;
 export const STAGE_ROWS = 20;
 export const STAGE_COLS = 10;
@@ -37,11 +36,11 @@ export const BRICK_IMAGES: { [key: number]: string } = {
 };
 
 export const BRICK_ENERGY: { [key: number]: number } = {
-  1: 1, // Red brick
-  2: 1, // Green brick
-  3: 2, // Yellow brick
-  4: 2, // Blue brick
-  5: 3 // Purple brick
+  1: 1, // Красный блок
+  2: 1, // Зелёный блок
+  3: 2, // Жёлтый блок
+  4: 2, // Синий блок
+  5: 3 // Фиолетовый блок
 };
 
 // prettier-ignore

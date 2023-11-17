@@ -1,11 +1,12 @@
 import { CanvasView } from "./view/CanvasView";
+import { Collision } from "./Collision";
 import { Ball } from "./sprites/Ball";
 import { Brick } from "./sprites/Brick";
 import { Paddle } from "./sprites/Paddle";
-// Images
+// Импорт иображений
 import PADDLE_IMAGE from './images/paddle.png';
 import BALL_IMAGE from './images/ball.png';
-// Level and colors
+// Испорт уровней и цветов
 import {
   PADDLE_SPEED,
   PADDLE_WIDTH,
@@ -16,7 +17,8 @@ import {
   BALL_STARTX,
   BALL_STARTY
 } from './setup';
-// Helpers
+
+// Импорт хелперов
 import { createBricks } from "./helpers";
 
 let gameOver = false;
@@ -37,15 +39,16 @@ function gameLoop(
   bricks: Brick[],
   paddle: Paddle,
   ball: Ball,
+  collision: Collision,
 ) {
   view.clear();
   view.drawBricks(bricks);
   view.drawSprite(paddle);
   view.drawSprite(ball);
-  // Move ball
+  // Движение мяча
   ball.moveBall();
 
-  // Move paddle and check so it won't exit the playfield
+  // Движение ракетки и проверка, не вышло ли оно за игровое поле
   if (
     (paddle.isMovingLeft && paddle.pos.x > 0) || 
     (paddle.isMovingRight && paddle.pos.x < view.canvas.width - paddle.width)
@@ -53,17 +56,30 @@ function gameLoop(
     paddle.movePaddle();
   }
 
-  requestAnimationFrame(() => gameLoop(view, bricks, paddle, ball));
+  collision.checkBallCollision(ball, paddle, view);
+  const collidingBrick = collision.isCollidingBricks(ball, bricks);
+
+  if (collidingBrick) {
+    score += 1;
+    view.drawScore(score);
+  }
+
+  requestAnimationFrame(() => gameLoop(view, bricks, paddle, ball, collision));
 }
 
 function startGame(view: CanvasView) {
-  // Reset displys
+  // Сбросить дисплеи
   score = 0;
   view.drawInfo('');
   view.drawScore(0);
-  // Create all bricks
+
+  // Создание единицы столкновения
+  const collision = new Collision();
+  
+  // Создание всех блоков
   const bricks = createBricks();
-  // Create a Ball
+  
+  // Создание мяча
   const ball = new Ball(
     BALL_SPEED,
     BALL_SIZE,
@@ -73,7 +89,8 @@ function startGame(view: CanvasView) {
     },
     BALL_IMAGE
   )
-  // Create a Paddle 
+  
+  // Создание ракетки 
   const paddle = new Paddle(
     PADDLE_SPEED,
     PADDLE_WIDTH,
@@ -85,9 +102,9 @@ function startGame(view: CanvasView) {
     PADDLE_IMAGE
   )
 
-  gameLoop(view, bricks, paddle, ball);
+  gameLoop(view, bricks, paddle, ball, collision);
 }
 
-// Create a new view
+// Создание отрисовки canvas
 const view = new CanvasView('#playField');
 view.initStartButton(startGame);

@@ -17,7 +17,7 @@ export class Brick {
     this.brickImage.src = image;
   }
 
-  // Getters
+  // Геттеры
   get width(): number {
     return this.brickWidth;
   }
@@ -36,5 +36,10 @@ export class Brick {
 
   get energy(): number {
     return this.brickEnergy;
+  }
+
+  // Сеттеры
+  set energy(energy: number) {
+    this.brickEnergy = energy;
   }
 } 

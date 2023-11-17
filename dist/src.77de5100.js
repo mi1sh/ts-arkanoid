@@ -179,6 +179,70 @@ function () {
 }();
 
 exports.CanvasView = CanvasView;
+},{}],"Collision.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Collision = void 0;
+
+var Collision =
+/** @class */
+function () {
+  function Collision() {}
+
+  Collision.prototype.isCollidingBrick = function (ball, brick) {
+    if (ball.pos.x < brick.pos.x + brick.width && ball.pos.x + ball.width > brick.pos.x && ball.pos.y < brick.pos.y + brick.height && ball.pos.y + ball.height > brick.pos.y) {
+      return true;
+    }
+
+    return false;
+  }; // Проверка столкновения мяча с блоками
+
+
+  Collision.prototype.isCollidingBricks = function (ball, bricks) {
+    var _this = this;
+
+    var colliding = false;
+    bricks.forEach(function (brick, i) {
+      if (_this.isCollidingBrick(ball, brick)) {
+        ball.changeYDirection();
+
+        if (brick.energy === 1) {
+          bricks.splice(i, 1);
+        } else {
+          brick.energy -= 1;
+        }
+
+        colliding = true;
+      }
+    });
+    return colliding;
+  };
+
+  Collision.prototype.checkBallCollision = function (ball, paddle, view) {
+    //1. Проверка столкновения мяча с ракеткой
+    if (ball.pos.x + ball.width > paddle.pos.x && ball.pos.x < paddle.pos.x + paddle.width && ball.pos.y + ball.height === paddle.pos.y) {
+      ball.changeYDirection();
+    } //2. Проверка столкновения мяча со стенами
+    // Ограничение движения по X
+
+
+    if (ball.pos.x > view.canvas.width - ball.width || ball.pos.x < 0) {
+      ball.changeXDirection();
+    } // Ограничение движения по Y
+
+
+    if (ball.pos.y < 0) {
+      ball.changeYDirection();
+    }
+  };
+
+  return Collision;
+}();
+
+exports.Collision = Collision;
 },{}],"sprites/Ball.ts":[function(require,module,exports) {
 "use strict";
 
@@ -204,7 +268,7 @@ function () {
   }
 
   Object.defineProperty(Ball.prototype, "width", {
-    // Getters
+    // Геттеры
     get: function get() {
       return this.ballSize;
     },
@@ -231,7 +295,7 @@ function () {
     },
     enumerable: false,
     configurable: true
-  }); // Methods
+  }); // Методы
 
   Ball.prototype.changeYDirection = function () {
     this.speed.y = -this.speed.y;
@@ -286,14 +350,14 @@ function () {
     this.position = position;
     this.moveLeft = false;
     this.moveRight = false;
-    this.paddleImage.src = image; // Event Listeners
+    this.paddleImage.src = image; // Обработка событий
 
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
   }
 
   Object.defineProperty(Paddle.prototype, "width", {
-    // Getters
+    // Геттеры
     get: function get() {
       return this.paddleWidth;
     },
@@ -379,9 +443,8 @@ var _brickPurple = _interopRequireDefault(require("./images/brick-purple.png"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Grab the canvas element for calculating the brick width
-// depending on canvas width
-var canvas = document.querySelector('#playField'); // Constants
+// Элемент canvas, расчет ширины блока в зависимости от ширины холста canvas
+var canvas = document.querySelector('#playField'); // Константы
 
 var STAGE_PADDING = 10;
 exports.STAGE_PADDING = STAGE_PADDING;
@@ -424,7 +487,7 @@ var BRICK_ENERGY = {
   2: 1,
   3: 2,
   4: 2,
-  5: 3 // Purple brick
+  5: 3 // Фиолетовый блок
 
 }; // prettier-ignore
 
@@ -456,7 +519,7 @@ function () {
   }
 
   Object.defineProperty(Brick.prototype, "width", {
-    // Getters
+    // Геттеры
     get: function get() {
       return this.brickWidth;
     },
@@ -487,6 +550,10 @@ function () {
   Object.defineProperty(Brick.prototype, "energy", {
     get: function get() {
       return this.brickEnergy;
+    },
+    // Сеттеры
+    set: function set(energy) {
+      this.brickEnergy = energy;
     },
     enumerable: false,
     configurable: true
@@ -539,6 +606,8 @@ function createBricks() {
 
 var _CanvasView = require("./view/CanvasView");
 
+var _Collision = require("./Collision");
+
 var _Ball = require("./sprites/Ball");
 
 var _Paddle = require("./sprites/Paddle");
@@ -553,9 +622,9 @@ var _helpers = require("./helpers");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Images
-// Level and colors
-// Helpers
+// Импорт иображений
+// Испорт уровней и цветов
+// Импорт хелперов
 var gameOver = false;
 var score = 0;
 
@@ -569,47 +638,57 @@ function setGameWin(view) {
   gameOver = false;
 }
 
-function gameLoop(view, bricks, paddle, ball) {
+function gameLoop(view, bricks, paddle, ball, collision) {
   view.clear();
   view.drawBricks(bricks);
   view.drawSprite(paddle);
-  view.drawSprite(ball); // Move ball
+  view.drawSprite(ball); // Движение мяча
 
-  ball.moveBall(); // Move paddle and check so it won't exit the playfield
+  ball.moveBall(); // Движение ракетки и проверка, не вышло ли оно за игровое поле
 
   if (paddle.isMovingLeft && paddle.pos.x > 0 || paddle.isMovingRight && paddle.pos.x < view.canvas.width - paddle.width) {
     paddle.movePaddle();
   }
 
+  collision.checkBallCollision(ball, paddle, view);
+  var collidingBrick = collision.isCollidingBricks(ball, bricks);
+
+  if (collidingBrick) {
+    score += 1;
+    view.drawScore(score);
+  }
+
   requestAnimationFrame(function () {
-    return gameLoop(view, bricks, paddle, ball);
+    return gameLoop(view, bricks, paddle, ball, collision);
   });
 }
 
 function startGame(view) {
-  // Reset displys
+  // Сбросить дисплеи
   score = 0;
   view.drawInfo('');
-  view.drawScore(0); // Create all bricks
+  view.drawScore(0); // Создание единицы столкновения
 
-  var bricks = (0, _helpers.createBricks)(); // Create a Ball
+  var collision = new _Collision.Collision(); // Создание всех блоков
+
+  var bricks = (0, _helpers.createBricks)(); // Создание мяча
 
   var ball = new _Ball.Ball(_setup.BALL_SPEED, _setup.BALL_SIZE, {
     x: _setup.BALL_STARTX,
     y: _setup.BALL_STARTY
-  }, _ball.default); // Create a Paddle 
+  }, _ball.default); // Создание ракетки 
 
   var paddle = new _Paddle.Paddle(_setup.PADDLE_SPEED, _setup.PADDLE_WIDTH, _setup.PADDLE_HEIGHT, {
     x: _setup.PADDLE_STARTX,
     y: view.canvas.height - _setup.PADDLE_HEIGHT - 5
   }, _paddle.default);
-  gameLoop(view, bricks, paddle, ball);
-} // Create a new view
+  gameLoop(view, bricks, paddle, ball, collision);
+} // Создание отрисовки canvas
 
 
 var view = new _CanvasView.CanvasView('#playField');
 view.initStartButton(startGame);
-},{"./view/CanvasView":"view/CanvasView.ts","./sprites/Ball":"sprites/Ball.ts","./sprites/Paddle":"sprites/Paddle.ts","./images/paddle.png":"images/paddle.png","./images/ball.png":"images/ball.png","./setup":"setup.ts","./helpers":"helpers.ts"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./view/CanvasView":"view/CanvasView.ts","./Collision":"Collision.ts","./sprites/Ball":"sprites/Ball.ts","./sprites/Paddle":"sprites/Paddle.ts","./images/paddle.png":"images/paddle.png","./images/ball.png":"images/ball.png","./setup":"setup.ts","./helpers":"helpers.ts"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

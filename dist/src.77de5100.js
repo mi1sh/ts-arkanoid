@@ -179,70 +179,103 @@ function () {
 }();
 
 exports.CanvasView = CanvasView;
-},{}],"sprites/Brick.ts":[function(require,module,exports) {
+},{}],"sprites/Paddle.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Brick = void 0;
+exports.Paddle = void 0;
 
-var Brick =
+var Paddle =
 /** @class */
 function () {
-  function Brick(brickWidth, brickHeight, position, brickEnergy, image) {
-    this.brickWidth = brickWidth;
-    this.brickHeight = brickHeight;
+  function Paddle(speed, paddleWidth, paddleHeight, position, image) {
+    var _this = this;
+
+    this.speed = speed;
+    this.paddleWidth = paddleWidth;
+    this.paddleHeight = paddleHeight;
     this.position = position;
-    this.brickEnergy = brickEnergy;
-    this.brickImage = new Image();
-    this.brickWidth = brickWidth;
-    this.brickHeight = brickHeight;
+    this.paddleImage = new Image();
+
+    this.handleKeyUp = function (e) {
+      if (e.code === 'ArrowLeft' || e.key === 'ArrowLeft') _this.moveLeft = false;
+      if (e.code === 'ArrowRight' || e.key === 'ArrowRight') _this.moveRight = false;
+    };
+
+    this.handleKeyDown = function (e) {
+      if (e.code === 'ArrowLeft' || e.key === 'ArrowLeft') _this.moveLeft = true;
+      if (e.code === 'ArrowRight' || e.key === 'ArrowRight') _this.moveRight = true;
+    };
+
+    this.speed = speed;
+    this.paddleWidth = paddleWidth;
+    this.paddleHeight = paddleHeight;
     this.position = position;
-    this.brickEnergy = brickEnergy;
-    this.brickImage.src = image;
+    this.moveLeft = false;
+    this.moveRight = false;
+    this.paddleImage.src = image; // Event Listeners
+
+    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keyup', this.handleKeyUp);
   }
 
-  Object.defineProperty(Brick.prototype, "width", {
+  Object.defineProperty(Paddle.prototype, "width", {
     // Getters
     get: function get() {
-      return this.brickWidth;
+      return this.paddleWidth;
     },
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(Brick.prototype, "height", {
+  Object.defineProperty(Paddle.prototype, "height", {
     get: function get() {
-      return this.brickHeight;
+      return this.paddleHeight;
     },
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(Brick.prototype, "pos", {
+  Object.defineProperty(Paddle.prototype, "pos", {
     get: function get() {
       return this.position;
     },
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(Brick.prototype, "image", {
+  Object.defineProperty(Paddle.prototype, "image", {
     get: function get() {
-      return this.brickImage;
+      return this.paddleImage;
     },
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(Brick.prototype, "energy", {
+  Object.defineProperty(Paddle.prototype, "isMovingLeft", {
     get: function get() {
-      return this.brickEnergy;
+      return this.moveLeft;
     },
     enumerable: false,
     configurable: true
   });
-  return Brick;
+  Object.defineProperty(Paddle.prototype, "isMovingRight", {
+    get: function get() {
+      return this.moveRight;
+    },
+    enumerable: false,
+    configurable: true
+  });
+
+  Paddle.prototype.movePaddle = function () {
+    if (this.moveLeft) this.pos.x -= this.speed;
+    if (this.moveRight) this.pos.x += this.speed;
+  };
+
+  return Paddle;
 }();
 
-exports.Brick = Brick;
+exports.Paddle = Paddle;
+},{}],"images/paddle.png":[function(require,module,exports) {
+module.exports = "/paddle.f48d929a.png";
 },{}],"images/brick-red.png":[function(require,module,exports) {
 module.exports = "/brick-red.c1be1822.png";
 },{}],"images/brick-blue.png":[function(require,module,exports) {
@@ -325,7 +358,71 @@ var BRICK_ENERGY = {
 exports.BRICK_ENERGY = BRICK_ENERGY;
 var LEVEL = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 5, 5, 0, 0, 5, 5, 0, 0];
 exports.LEVEL = LEVEL;
-},{"./images/brick-red.png":"images/brick-red.png","./images/brick-blue.png":"images/brick-blue.png","./images/brick-green.png":"images/brick-green.png","./images/brick-yellow.png":"images/brick-yellow.png","./images/brick-purple.png":"images/brick-purple.png"}],"helpers.ts":[function(require,module,exports) {
+},{"./images/brick-red.png":"images/brick-red.png","./images/brick-blue.png":"images/brick-blue.png","./images/brick-green.png":"images/brick-green.png","./images/brick-yellow.png":"images/brick-yellow.png","./images/brick-purple.png":"images/brick-purple.png"}],"sprites/Brick.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Brick = void 0;
+
+var Brick =
+/** @class */
+function () {
+  function Brick(brickWidth, brickHeight, position, brickEnergy, image) {
+    this.brickWidth = brickWidth;
+    this.brickHeight = brickHeight;
+    this.position = position;
+    this.brickEnergy = brickEnergy;
+    this.brickImage = new Image();
+    this.brickWidth = brickWidth;
+    this.brickHeight = brickHeight;
+    this.position = position;
+    this.brickEnergy = brickEnergy;
+    this.brickImage.src = image;
+  }
+
+  Object.defineProperty(Brick.prototype, "width", {
+    // Getters
+    get: function get() {
+      return this.brickWidth;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(Brick.prototype, "height", {
+    get: function get() {
+      return this.brickHeight;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(Brick.prototype, "pos", {
+    get: function get() {
+      return this.position;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(Brick.prototype, "image", {
+    get: function get() {
+      return this.brickImage;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(Brick.prototype, "energy", {
+    get: function get() {
+      return this.brickEnergy;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  return Brick;
+}();
+
+exports.Brick = Brick;
+},{}],"helpers.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -369,8 +466,18 @@ function createBricks() {
 
 var _CanvasView = require("./view/CanvasView");
 
+var _Paddle = require("./sprites/Paddle");
+
+var _paddle = _interopRequireDefault(require("./images/paddle.png"));
+
+var _setup = require("./setup");
+
 var _helpers = require("./helpers");
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Images
+// Level and colors
 // Helpers
 var gameOver = false;
 var score = 0;
@@ -385,11 +492,17 @@ function setGameWin(view) {
   gameOver = false;
 }
 
-function gameLoop(view, bricks) {
+function gameLoop(view, bricks, paddle) {
   view.clear();
   view.drawBricks(bricks);
+  view.drawSprite(paddle); // Move paddle and check so it won't exit the playfield
+
+  if (paddle.isMovingLeft && paddle.pos.x > 0 || paddle.isMovingRight && paddle.pos.x < view.canvas.width - paddle.width) {
+    paddle.movePaddle();
+  }
+
   requestAnimationFrame(function () {
-    return gameLoop(view, bricks);
+    return gameLoop(view, bricks, paddle);
   });
 }
 
@@ -399,14 +512,19 @@ function startGame(view) {
   view.drawInfo('');
   view.drawScore(0); // Create all bricks
 
-  var bricks = (0, _helpers.createBricks)();
-  gameLoop(view, bricks);
+  var bricks = (0, _helpers.createBricks)(); // Create a Paddle 
+
+  var paddle = new _Paddle.Paddle(_setup.PADDLE_SPEED, _setup.PADDLE_WIDTH, _setup.PADDLE_HEIGHT, {
+    x: _setup.PADDLE_STARTX,
+    y: view.canvas.height - _setup.PADDLE_HEIGHT - 5
+  }, _paddle.default);
+  gameLoop(view, bricks, paddle);
 } // Create a new view
 
 
 var view = new _CanvasView.CanvasView('#playField');
 view.initStartButton(startGame);
-},{"./view/CanvasView":"view/CanvasView.ts","./helpers":"helpers.ts"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./view/CanvasView":"view/CanvasView.ts","./sprites/Paddle":"sprites/Paddle.ts","./images/paddle.png":"images/paddle.png","./setup":"setup.ts","./helpers":"helpers.ts"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -434,7 +552,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55829" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60334" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
